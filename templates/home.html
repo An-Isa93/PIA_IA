@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Energy_predictor</title>
+</head>
+<body>
+    <select name="models" id="modelSelect">
+        <option value="1">Linear Regression</option>
+        <option value="2">Random Forest</option>
+        <option value="3">XGBoost</option>
+        <option value="4">Prophet</option>
+    </select>
+    <div class="form-section">
+        <h1>Outdoor Environmental Data</h1>
+        <div class="form-row">
+            <label>Air Temperature:</label>
+            <input type="number">
+        </div>
+        
+        <div class="form-row">
+            <label>Humidity:</label>
+            <input type="number">
+        </div>
+        
+        <div class="form-row">
+            <label>Solar Radiation:</label>
+            <input type="number">
+        </div>
+    
+        <div class="form-row">
+            <label>Outdoor Temperature:</label>
+            <input type="number">
+        </div>
+        
+        <h1>Indoor Environmental Data</h1>
+        <div class="form-row">
+            <label>Heating Temperature:</label>
+            <input type="number">
+        </div>
+    
+        <div class="form-row">
+            <label>Air Conditioning Temperature:</label>
+            <input type="number">
+        </div>
+        
+        <h1>Occupant Data</h1>
+        <div class="form-row">
+            <label>Number of Occupants:</label>
+            <input type="number">
+        </div>
+
+        <div class="form-row">
+            <label>Number of Wi-Fi Users:</label>
+            <input type="number">
+        </div>
+
+        <div class="form-row">
+            <label>Date:</label>
+            <input type="date" id="dateField" disabled>
+        </div>
+        <button>Calculate</button>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
