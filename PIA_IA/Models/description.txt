@@ -1,0 +1,22 @@
+LA IDEA ES QUE:
+DESDE EL RUTEO DE DJANGO, SE LEA EL ARCHIVO Y SE GENERE EL TRAIN_TEST_SPLIT
+LUEGO EN BASE AL MODELO SELECCIONADO, CON UN SWITCH CREAMOS EL MODELO
+TANTO LR COMO RFR COMO XGB TIENEN LA MISMA ESTRUCTURA SI NO ME EQUIVOCO, ASI QUE PUEDE SER ASI:
+(las opciones del drop-down)
+if model=LR:
+    c_model = LR()
+elif model=RFR:
+    c_model = RFR()
+elif model=XGB:
+    c_model = XGB()
+else model=Prophet:
+    c_model = Prophet()
+
+if model!=Prophet():
+    train_model
+    predict_and_get_metrics
+    .
+    .
+    .
+else:
+    revisen el archivo de prophet
