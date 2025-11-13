@@ -2,6 +2,10 @@ from django.shortcuts import render
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
+import io
+import base64
+import plotly.express as px
+import matplotlib.pyplot as plt
 from Models.LinearRegression import RegresionLineal
 from Models.Prophet import ProphetTimeSeries
 from Models.RandomForestRegressor import RandomForestRegression
@@ -121,3 +125,60 @@ def home(request):
                 else:
                     context["prediction"] = "⚠️ No se proporcionó una fecha para Prophet."
     return render(request,"home.html", context)
+
+def graphs(request):
+    df = pd.read_csv("Datasets/energy_consumption_merged.csv")
+    df['date'] = pd.to_datetime(df['date'], format='%d/%m/%Y', errors='coerce')
+    df.fillna(df.mean(), inplace=True)
+    df = df.drop(columns=['date'])
+    # Variables
+    X = df.drop(columns=['Energy_Consumption'])
+    y = df['Energy_Consumption']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    graficas = {}
+
+    # === 1️⃣ Linear Regression ===
+    lr = RegresionLineal(df, X_train, X_test, y_train, y_test)
+    lr.train_model()
+    y_pred_lr = lr.predict_and_get_metrics(X_test)
+
+
+    '''plt.figure(figsize=(6, 5))
+    plt.style.use('seaborn-v0_8')
+    plt.scatter(y_test, y_pred_lr[0], alpha=0.6)
+    plt.xlabel("Real Energy Consumption")
+    plt.ylabel("Predicted")
+    plt.title("Linear Regression")
+    plt.grid(True)
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    graficas['Linear Regression'] = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    buffer.close()
+    plt.close()
+    context = {"graficas": graficas}'''
+    results = pd.DataFrame({
+    'Real': y_test,
+    'Predicted': y_pred_lr[0]
+    })
+
+    # Crear gráfica interactiva
+    fig = px.scatter(
+        results,
+        x='Real',
+        y='Predicted',
+        title='Linear Regression - Real vs Predicted',
+        labels={'Real': 'Real Energy Consumption', 'Predicted': 'Predicted'},
+        template='plotly_white'
+    )
+    fig.update_layout(
+    width=600,   # ancho en píxeles
+    height=500,  # alto en píxeles
+    margin=dict(l=20, r=20, t=40, b=20),  # márgenes más compactos
+    modebar=dict(orientation='v')
+    )
+    # Convertir la figura a HTML
+    graficas['Linear Regression'] = fig.to_html(full_html=False)
+    context = {"graficas": graficas}
+    return render(request, "graphs.html", context)
