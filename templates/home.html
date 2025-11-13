@@ -8,63 +8,81 @@
     <title>Energy_predictor</title>
 </head>
 <body>
-    <select name="models" id="modelSelect">
-        <option value="1">Linear Regression</option>
-        <option value="2">Random Forest</option>
-        <option value="3">XGBoost</option>
-        <option value="4">Prophet</option>
-    </select>
-    <div class="form-section">
-        <h1>Outdoor Environmental Data</h1>
-        <div class="form-row">
-            <label>Air Temperature:</label>
-            <input type="number">
+    <form method="POST" action="">
+        {% csrf_token %}
+        <select name="models" id="modelSelect">
+            <option value="1" {% if request.POST.models == "1" %}selected{% endif %}>Linear Regression</option>
+            <option value="2" {% if request.POST.models == "2" %}selected{% endif %}>Random Forest</option>
+            <option value="3" {% if request.POST.models == "3" %}selected{% endif %}>XGBoost</option>
+            <option value="4" {% if request.POST.models == "4" %}selected{% endif %}>Prophet</option>
+        </select>
+
+        <div class="form-section">
+            <h1>Outdoor Environmental Data</h1>
+            <div class="form-row">
+                    <label>Air Temperature:</label>
+                    <input type="number" name="Air_Temperature" id="Air_Temperature" value="{{ request.POST.Air_Temperature }}">
+            </div>
+
+            <div class="form-row">
+                <label>Humidity:</label>
+                <input type="number" name="Humidity" id="Humidity" value="{{ request.POST.Humidity }}">
+            </div>
+
+            <div class="form-row">
+                <label>Solar Radiation:</label>
+                <input type="number" name="SolarRadiation" id="SolarRadiation" value="{{ request.POST.SolarRadiation }}">
+            </div>
+
+            <div class="form-row">
+                <label>Cool Temperature (AC):</label>
+                <input type="number" name="Cool_Temperature" id="Cool_Temperature" value="{{ request.POST.Cool_Temperature }}">
+            </div>
+
+            <div class="form-row">
+                <label>Heat Temperature:</label>
+                <input type="number" name="Heat_Temperature" id="Heat_Temperature" value="{{ request.POST.Heat_Temperature }}">
+            </div>
+
+            <div class="form-row">
+                <label>Interior Temperature:</label>
+                <input type="number" name="Interior_Temperature" id="Interior_Temperature" value="{{ request.POST.Interior_Temperature }}">
+            </div>
+
+            <div class="form-row">
+                <label>Exterior Temperature:</label>
+                <input type="number" name="Exterior_Temperature" id="Exterior_Temperature" value="{{ request.POST.Exterior_Temperature }}">
+            </div>
+
+            <h1>Occupant Data</h1>
+
+            <div class="form-row">
+                <label>Total Occupants:</label>
+                <input type="number" name="Total_Occupants" id="Total_Occupants" value="{{ request.POST.Total_Occupants }}">
+            </div>
+
+            <div class="form-row">
+                <label>Wi-Fi Users:</label>
+                <input type="number" name="Wifi_Users" id="Wifi_Users" value="{{ request.POST.Wifi_Users }}">
+            </div>
+
+            <div class="form-row">
+                <label>Date:</label>
+                <input type="date" id="dateField" name="date" value="{{ request.POST.date }}" disabled>
+            </div>
+
+            <button>Calculate</button>
+            {% if result %}
+                <p style="color: green;">{{ result }}</p>
+            {% endif %}
+            {% if prediction %}
+            <h3>{{ prediction }} </h3>
+            {% endif %}
         </div>
-        
-        <div class="form-row">
-            <label>Humidity:</label>
-            <input type="number">
-        </div>
-        
-        <div class="form-row">
-            <label>Solar Radiation:</label>
-            <input type="number">
-        </div>
+
+
+    </form>
     
-        <div class="form-row">
-            <label>Outdoor Temperature:</label>
-            <input type="number">
-        </div>
-        
-        <h1>Indoor Environmental Data</h1>
-        <div class="form-row">
-            <label>Heating Temperature:</label>
-            <input type="number">
-        </div>
-    
-        <div class="form-row">
-            <label>Air Conditioning Temperature:</label>
-            <input type="number">
-        </div>
-        
-        <h1>Occupant Data</h1>
-        <div class="form-row">
-            <label>Number of Occupants:</label>
-            <input type="number">
-        </div>
-
-        <div class="form-row">
-            <label>Number of Wi-Fi Users:</label>
-            <input type="number">
-        </div>
-
-        <div class="form-row">
-            <label>Date:</label>
-            <input type="date" id="dateField" disabled>
-        </div>
-        <button>Calculate</button>
-    </div>
-
     <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
