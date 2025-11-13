@@ -1,88 +1,204 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <title>Energy_predictor</title>
+
 </head>
+
 <body>
+    <header class="bg-primary text-white text-center py-3 mb-4">
+        <h1 class="m-0">Energy Predictor</h1>
+    </header>
     <form method="POST" action="">
+
+
         {% csrf_token %}
-        <select name="models" id="modelSelect">
-            <option value="1" {% if request.POST.models == "1" %}selected{% endif %}>Linear Regression</option>
-            <option value="2" {% if request.POST.models == "2" %}selected{% endif %}>Random Forest</option>
-            <option value="3" {% if request.POST.models == "3" %}selected{% endif %}>XGBoost</option>
-            <option value="4" {% if request.POST.models == "4" %}selected{% endif %}>Prophet</option>
-        </select>
+        <div class="dropdown mb-3">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="modelDropdown" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                {% if request.POST.models == "1" %}Linear Regression
+                {% elif request.POST.models == "2" %}Random Forest
+                {% elif request.POST.models == "3" %}XGBoost
+                {% elif request.POST.models == "4" %}Prophet
+                {% else %}Selecciona un modelo{% endif %}
+            </button>
+
+            <ul class="dropdown-menu" aria-labelledby="modelDropdown">
+                <li><a class="dropdown-item" href="#" onclick="setModel('1', 'Linear Regression')">Linear Regression</a>
+                </li>
+                <li><a class="dropdown-item" href="#" onclick="setModel('2', 'Random Forest')">Random Forest</a></li>
+                <li><a class="dropdown-item" href="#" onclick="setModel('3', 'XGBoost')">XGBoost</a></li>
+                <li><a class="dropdown-item" href="#" onclick="setModel('4', 'Prophet')">Prophet</a></li>
+            </ul>
+        </div>
+
+        <input type="hidden" name="models" id="modelInput" value="{{ request.POST.models }}">
 
         <div class="form-section">
-            <h1>Outdoor Environmental Data</h1>
-            <div class="form-row">
-                    <label>Air Temperature:</label>
-                    <input type="number" name="Air_Temperature" id="Air_Temperature" value="{{ request.POST.Air_Temperature }}">
+            <div class="grid-container">
+
+                <!-- Outdoor Environmental Data -->
+                <div class="grid-item">
+                    <h1>Outdoor Environmental Data</h1>
+
+                    <div class="mb-3">
+                        <label>Air Temperature:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="Air_Temperature"
+                                value="{{ request.POST.Air_Temperature }}">
+                            <span class="input-group-text">°C</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Humidity:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="Humidity"
+                                value="{{ request.POST.Humidity }}">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Solar Radiation:</label>
+                        <div class="input-group">
+                        <input type="number" class="form-control" name="SolarRadiation"
+                            value="{{ request.POST.SolarRadiation }}">
+                        <span class="input-group-text">W/m2</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Cool Temperature (AC):</label>
+                        <div class="input-group">
+                        <input type="number" class="form-control" name="Cool_Temperature"
+                            value="{{ request.POST.Cool_Temperature }}">
+                        <span class="input-group-text">°F</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Heat Temperature:</label>
+                        <div class="input-group">
+                        <input type="number" class="form-control" name="Heat_Temperature"
+                            value="{{ request.POST.Heat_Temperature }}">
+                        <span class="input-group-text">°F</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Interior Temperature:</label>
+                        <div class="input-group">
+                        <input type="number" class="form-control" name="Interior_Temperature"
+                            value="{{ request.POST.Interior_Temperature }}">
+                        <span class="input-group-text">°F</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Exterior Temperature:</label>
+                        <div class="input-group">
+                        <input type="number" class="form-control" name="Exterior_Temperature"
+                            value="{{ request.POST.Exterior_Temperature }}">
+                        <span class="input-group-text">°F</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Occupant Data -->
+                <div class="grid-item">
+                    <h1>Occupant Data</h1>
+
+                    <div class="mb-3">
+                        <label>Total Occupants:</label>
+                        <input type="number" class="form-control" name="Total_Occupants"
+                            value="{{ request.POST.Total_Occupants }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Wi-Fi Users:</label>
+                        <input type="number" class="form-control" name="Wifi_Users"
+                            value="{{ request.POST.Wifi_Users }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Date:</label>
+                        <input type="date" class="form-control" name="date" value="{{ request.POST.date }}" disabled>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-outline-primary px-4">Calculate</button>
+                    </div>
+
+                    {% if result %}
+                    <p class="text-success mt-3 text-center">{{ result }}</p>
+                    {% endif %}
+                    {% if prediction %}
+                    <h3 class="text-center mt-3">{{ prediction }}</h3>
+                    {% endif %}
+                </div>
+
             </div>
 
-            <div class="form-row">
-                <label>Humidity:</label>
-                <input type="number" name="Humidity" id="Humidity" value="{{ request.POST.Humidity }}">
-            </div>
 
-            <div class="form-row">
-                <label>Solar Radiation:</label>
-                <input type="number" name="SolarRadiation" id="SolarRadiation" value="{{ request.POST.SolarRadiation }}">
-            </div>
-
-            <div class="form-row">
-                <label>Cool Temperature (AC):</label>
-                <input type="number" name="Cool_Temperature" id="Cool_Temperature" value="{{ request.POST.Cool_Temperature }}">
-            </div>
-
-            <div class="form-row">
-                <label>Heat Temperature:</label>
-                <input type="number" name="Heat_Temperature" id="Heat_Temperature" value="{{ request.POST.Heat_Temperature }}">
-            </div>
-
-            <div class="form-row">
-                <label>Interior Temperature:</label>
-                <input type="number" name="Interior_Temperature" id="Interior_Temperature" value="{{ request.POST.Interior_Temperature }}">
-            </div>
-
-            <div class="form-row">
-                <label>Exterior Temperature:</label>
-                <input type="number" name="Exterior_Temperature" id="Exterior_Temperature" value="{{ request.POST.Exterior_Temperature }}">
-            </div>
-
-            <h1>Occupant Data</h1>
-
-            <div class="form-row">
-                <label>Total Occupants:</label>
-                <input type="number" name="Total_Occupants" id="Total_Occupants" value="{{ request.POST.Total_Occupants }}">
-            </div>
-
-            <div class="form-row">
-                <label>Wi-Fi Users:</label>
-                <input type="number" name="Wifi_Users" id="Wifi_Users" value="{{ request.POST.Wifi_Users }}">
-            </div>
-
-            <div class="form-row">
-                <label>Date:</label>
-                <input type="date" id="dateField" name="date" value="{{ request.POST.date }}" disabled>
-            </div>
-
-            <button>Calculate</button>
-            {% if result %}
-                <p style="color: green;">{{ result }}</p>
-            {% endif %}
-            {% if prediction %}
-            <h3>{{ prediction }} </h3>
-            {% endif %}
         </div>
 
 
     </form>
-    
+
     <script src="{% static 'js/script.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <script>
+        function setModel(value, label) {
+            document.getElementById('modelInput').value = value;
+            document.getElementById('modelDropdown').textContent = label;
+        }
+    </script>
+    <script>
+        function setModel(value, label) {
+            document.getElementById('modelInput').value = value;
+            document.getElementById('modelDropdown').textContent = label;
+            toggleDateInput(value);
+        }
+
+        function toggleDateInput(selectedValue) {
+            const dateInput = document.querySelector('input[name="date"]').closest('.mb-3');
+
+            if (selectedValue === "4") {
+                dateInput.style.display = "block"; // Muestra la sección de fecha
+                dateInput.querySelector('input').disabled = false;
+            } else {
+                dateInput.style.display = "none"; // Oculta la sección de fecha
+                dateInput.querySelector('input').disabled = true;
+                dateInput.querySelector('input').value = "";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const currentModel = document.getElementById("modelInput").value;
+            toggleDateInput(currentModel);
+        });
+    </script>
+    <script>
+        // Validar que haya modelo seleccionado antes de enviar el formulario
+        document.querySelector("form").addEventListener("submit", function (event) {
+            const selectedModel = document.getElementById("modelInput").value;
+
+            if (!selectedModel) {
+                event.preventDefault();
+                alert("Por favor selecciona un modelo antes de calcular.");
+            }
+        });
+    </script>
 </body>
+
 </html>
