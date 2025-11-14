@@ -67,8 +67,8 @@ def home(request):
                     y_pred, lower, upper, metrics = model.predict_and_get_metrics(np.array([input_data]))
                    
                     context["prediction"] = (
-                                            f"Predicción: {round(y_pred[0], 2)} kW"
-                                            f"Rango de confianza:{round(lower[0], 2)} – {round(upper[0], 2)} kW"
+                                            f"Predicción: {round(y_pred[0], 2)} kW<br>"
+                                            f"<span style='white-space: nowrap;'>Rango de confianza: {round(lower[0], 2)} – {round(upper[0], 2)}kW"
                                             )
 
                 else:
@@ -117,8 +117,8 @@ def home(request):
                         y_value = y_pred["yhat"].iloc[0]  # primer valor de la predicción
 
                         context["prediction"] = (
-                            f"Predicción para {date_input.date()}: {round(y_value, 2)} kW "
-                            f"Rango de confianza: {round(lower, 2)} - {round(upper, 2)} kW"
+                            f"Predicción para {date_input.date()}: {round(y_value, 2)} kW <br>"
+                            f"<span style='white-space: nowrap;'>Rango de confianza: {round(lower, 2)} - {round(upper, 2)} kW"
                         )
                     except Exception as e:
                         context["prediction"] = f"Error al predecir con Prophet: {e}"

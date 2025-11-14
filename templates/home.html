@@ -141,7 +141,7 @@
                     <p class="text-success mt-3 text-center">{{ result }}</p>
                     {% endif %}
                     {% if prediction %}
-                    <h3 class="text-center mt-3">{{ prediction }}</h3>
+                    <h4>{{ prediction|safe }}</h4>
                     {% endif %}
                 </div>
 
